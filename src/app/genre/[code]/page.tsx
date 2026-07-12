@@ -37,7 +37,7 @@ export default async function GenreLandingPage({ params }: { params: Promise<{ c
   let shops: Awaited<ReturnType<typeof searchAvailableNow>>["shops"] = [];
   let total = 0;
   try {
-    const result = await searchAvailableNow({ genreCode: genre.code, count: 12 });
+    const result = await searchAvailableNow({ genreCode: genre.code, count: 12 }, 300);
     shops = result.shops;
     total = result.resultsAvailable;
   } catch {

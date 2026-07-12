@@ -53,7 +53,13 @@ function requireApiKey(): string {
 
 // 「今すぐ予約できるお店」= 本日営業中(available_today=1)かつ現在時刻以降も営業(open=HHMM)。
 // hotpAPI01(C#デスクトップ版)と同じ検索条件を踏襲する。
-export async function searchAvailableNow(params: SearchParams): Promise<SearchResult> {
+//
+// revalidateSecondsを省略すると常にno-store(完全動的)で取得する。/searchのような
+// dynamic="force-dynamic"のページ向け。
+// revalidateSecondsを指定すると、その秒数でNextのfetchキャッシュに乗せる。/genre, /area
+// のようなrevalidate指定ページ向け(ここでno-storeのままだと、ページ側のrevalidate設定と
+// 矛盾し「Page changed from static to dynamic」エラーになる)。
+export async function searchAvailableNow(params: SearchParams, revalidateSeconds?: number): Promise<SearchResult> {
   const apiKey = requireApiKey();
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
@@ -76,10 +82,10 @@ export async function searchAvailableNow(params: SearchParams): Promise<SearchRe
   if (params.freeDrink) query.set("free_drink", "1");
   if (params.course) query.set("course", "1");
 
-  const res = await fetch(`${BASE_URL}?${query.toString()}`, {
-    // 現在時刻に依存する検索のため、キャッシュしない。
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${BASE_URL}?${query.toString()}`,
+    revalidateSeconds !== undefined ? { next: { revalidate: revalidateSeconds } } : { cache: "no-store" }
+  );
   if (!res.ok) {
     throw new Error(`ホットペッパーAPIの呼び出しに失敗しました(status=${res.status})`);
   }
