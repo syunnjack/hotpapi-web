@@ -1,6 +1,11 @@
+import Link from "next/link";
 import SearchForm from "@/components/SearchForm";
 import JsonLd from "@/components/JsonLd";
-import { resolveBaseUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
+import { GENRES, LARGE_AREAS, resolveBaseUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
+
+const MAJOR_AREA_CODES = ["Z011", "Z012", "Z022", "Z023", "Z033", "Z041", "Z091", "Z098"];
+const MAJOR_AREAS = LARGE_AREAS.filter((a) => MAJOR_AREA_CODES.includes(a.code));
+const REAL_GENRES = GENRES.filter((g) => g.code !== "");
 
 export default function HomePage() {
   const baseUrl = resolveBaseUrl();
@@ -32,7 +37,29 @@ export default function HomePage() {
         <SearchForm />
       </div>
 
-      <p className="mt-6 text-center text-xs text-neutral-400">
+      <div className="mt-10">
+        <h2 className="text-sm font-bold text-neutral-700">エリアから探す</h2>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {MAJOR_AREAS.map((a) => (
+            <Link key={a.code} href={`/area/${a.code}`} className="rounded-full border border-orange-200 bg-white px-3 py-1 text-xs text-neutral-600 hover:border-orange-400">
+              {a.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-sm font-bold text-neutral-700">ジャンルから探す</h2>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {REAL_GENRES.map((g) => (
+            <Link key={g.code} href={`/genre/${g.code}`} className="rounded-full border border-orange-200 bg-white px-3 py-1 text-xs text-neutral-600 hover:border-orange-400">
+              {g.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <p className="mt-8 text-center text-xs text-neutral-400">
         {SITE_NAME}はホットペッパーグルメAPI(リクルート)を利用した非公式の検索サービスです。予約・在庫状況の最終確認は各店舗・送客先でお願いします。
       </p>
     </div>
