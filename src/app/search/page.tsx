@@ -102,7 +102,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         {result && (
           <>
-            <p className="text-sm text-neutral-500">全 {result.resultsAvailable} 件</p>
+            <p className="text-sm text-neutral-500">
+              全 {result.resultsAvailable} 件
+              <span className="ml-2 text-xs text-neutral-400">
+                （{new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}時点）
+              </span>
+            </p>
 
             {result.shops.length === 0 ? (
               <div className="mt-4 rounded-xl bg-white p-10 text-center shadow-sm ring-1 ring-orange-100">

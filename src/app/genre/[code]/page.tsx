@@ -68,6 +68,9 @@ export default async function GenreLandingPage({ params }: { params: Promise<{ c
       <p className="mt-2 text-sm text-neutral-500">
         現在時点で{genre.name}のお店が全国で{total}件、今すぐ入店・予約できます。エリアを絞り込むには下の検索フォームをご利用ください。
       </p>
+      <p className="mt-1 text-xs text-neutral-400">
+        {`取得時点: ${new Date().toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}`}
+      </p>
 
       <Link
         href={`/search?genre=${genre.code}`}

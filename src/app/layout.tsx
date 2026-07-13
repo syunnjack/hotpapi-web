@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { resolveBaseUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <footer className="border-t border-orange-100 px-4 py-8 text-center text-xs text-neutral-500">
           © {SITE_NAME}　本サービスはホットペッパーグルメAPI(リクルート)を利用しています。
         </footer>
+        <Analytics />
       </body>
     </html>
   );
