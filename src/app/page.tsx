@@ -2,13 +2,17 @@ import Link from "next/link";
 import SearchForm from "@/components/SearchForm";
 import JsonLd from "@/components/JsonLd";
 import { GENRES, LARGE_AREAS, resolveBaseUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
+import { getPopularCombos } from "@/lib/ugc";
+
+export const revalidate = 300;
 
 const MAJOR_AREA_CODES = ["Z011", "Z012", "Z022", "Z023", "Z033", "Z041", "Z091", "Z098"];
 const MAJOR_AREAS = LARGE_AREAS.filter((a) => MAJOR_AREA_CODES.includes(a.code));
 const REAL_GENRES = GENRES.filter((g) => g.code !== "");
 
-export default function HomePage() {
+export default async function HomePage() {
   const baseUrl = resolveBaseUrl();
+  const popularCombos = await getPopularCombos(6);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
@@ -36,6 +40,28 @@ export default function HomePage() {
       <div className="mt-8">
         <SearchForm />
       </div>
+
+      {popularCombos.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-sm font-bold text-neutral-700">今よく検索されている組み合わせ</h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {popularCombos.map((combo) => {
+              const areaName = LARGE_AREAS.find((a) => a.code === combo.areaCode)?.name;
+              const genreName = GENRES.find((g) => g.code === combo.genreCode)?.name;
+              if (!areaName || !genreName) return null;
+              return (
+                <Link
+                  key={`${combo.areaCode}-${combo.genreCode}`}
+                  href={`/search?area=${combo.areaCode}&genre=${combo.genreCode}`}
+                  className="rounded-full border border-orange-300 bg-orange-50 px-3 py-1 text-xs text-orange-700 hover:border-orange-500"
+                >
+                  🔥 {areaName} × {genreName}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="mt-10">
         <h2 className="text-sm font-bold text-neutral-700">エリアから探す</h2>

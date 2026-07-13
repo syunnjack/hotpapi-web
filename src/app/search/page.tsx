@@ -1,8 +1,10 @@
 import Link from "next/link";
 import SearchForm from "@/components/SearchForm";
+import FeedbackButtons from "@/components/FeedbackButtons";
 import { searchAvailableNow } from "@/lib/hotpepper";
 import { GENRES, LARGE_AREAS } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
+import { getFeedbackCounts, logSearch } from "@/lib/ugc";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +61,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   } catch (e) {
     error = e instanceof Error ? e.message : "検索に失敗しました。";
   }
+
+  // 1ページ目の検索のみログする(ページ送りは同じ検索意図の再取得のため二重カウントしない)。
+  if (result && page === 1) {
+    await logSearch({
+      areaCode: sp.area || undefined,
+      genreCode: sp.genre || undefined,
+      budgetCode: sp.budget || undefined,
+      keyword: sp.keyword || undefined,
+      resultCount: result.resultsAvailable,
+    });
+  }
+
+  const feedbackCounts = result ? await getFeedbackCounts(result.shops.map((s) => s.id)) : new Map();
 
   const totalPages = result ? Math.max(1, Math.ceil(result.resultsAvailable / PER_PAGE)) : 1;
 
@@ -168,6 +183,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                           </div>
                         </div>
                       </a>
+                      <div className="border-t border-orange-50 px-3 py-2">
+                        <FeedbackButtons
+                          shopId={shop.id}
+                          shopName={shop.name}
+                          initialHelpful={feedbackCounts.get(shop.id)?.helpful ?? 0}
+                          initialNotHelpful={feedbackCounts.get(shop.id)?.notHelpful ?? 0}
+                        />
+                      </div>
                     </li>
                   );
                 })}
