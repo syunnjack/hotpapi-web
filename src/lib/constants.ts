@@ -89,6 +89,8 @@ export const GENRES: Array<{ code: string; name: string }> = [
   { code: "G015", name: "その他グルメ" },
 ];
 
+// 「予算マスタAPI」の実レスポンスで検証済み。旧B004/B005/B006は現在のAPIでは無効なコードで、
+// 検索条件に指定すると常に0件になる(サイレントに壊れる)ため、より細分化された現行コードに置き換えた。
 export const BUDGETS: Array<{ code: string; name: string }> = [
   { code: "", name: "指定なし" },
   { code: "B009", name: "〜500円" },
@@ -98,9 +100,13 @@ export const BUDGETS: Array<{ code: string; name: string }> = [
   { code: "B002", name: "2,001〜3,000円" },
   { code: "B003", name: "3,001〜4,000円" },
   { code: "B008", name: "4,001〜5,000円" },
-  { code: "B004", name: "5,001〜7,000円" },
-  { code: "B005", name: "7,001〜10,000円" },
-  { code: "B006", name: "10,001〜15,000円" },
+  { code: "B015", name: "5,001〜6,000円" },
+  { code: "B016", name: "6,001〜7,000円" },
+  { code: "B017", name: "7,001〜8,000円" },
+  { code: "B018", name: "8,001〜9,000円" },
+  { code: "B019", name: "9,001〜10,000円" },
+  { code: "B020", name: "10,001〜12,000円" },
+  { code: "B021", name: "12,001〜15,000円" },
   { code: "B012", name: "15,001〜20,000円" },
   { code: "B013", name: "20,001〜30,000円" },
   { code: "B014", name: "30,001円〜" },
